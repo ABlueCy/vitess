@@ -3468,6 +3468,10 @@ func commandValidateVersionKeyspace(ctx context.Context, wr *wrangler.Wrangler, 
 		wr.Logger().Printf("%s\n", result)
 	}
 
+	if len(res.Results) > 0 {
+		return fmt.Errorf("%s", res.Results[0])
+	}
+
 	return nil
 }
 

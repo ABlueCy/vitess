@@ -3239,7 +3239,7 @@ func (s *VtctldServer) ValidateVersionKeyspace(ctx context.Context, req *vtctlda
 			}
 
 			tabletWaitGroup.Add(1)
-			go func(alias *topodatapb.TabletAlias, m *sync.Mutex) {
+			go func(alias *topodatapb.TabletAlias, m *sync.Mutex, ctx context.Context) {
 				defer tabletWaitGroup.Done()
 				replicaVersion, err := s.GetVersion(ctx, &vtctldatapb.GetVersionRequest{TabletAlias: alias})
 				if err != nil {
@@ -3254,7 +3254,7 @@ func (s *VtctldServer) ValidateVersionKeyspace(ctx context.Context, req *vtctlda
 					shardResp.Results = append(shardResp.Results, fmt.Sprintf("primary %v version %v is different than replica %v version %v", topoproto.TabletAliasString(referenceAlias), referenceVersion, topoproto.TabletAliasString(alias), replicaVersion))
 					validateShardResponseMutex.Unlock()
 				}
-			}(alias, &validateShardResponseMutex)
+			}(alias, &validateShardResponseMutex, ctx)
 		}
 
 		tabletWaitGroup.Wait()
@@ -3353,7 +3353,6 @@ func StartServer(s *grpc.Server, ts *topo.Server) {
 
 // Helper function to get version of a tablet from its debug vars
 var getVersionFromTabletDebugVars = func(tabletAddr string) (string, error) {
-	fmt.Printf("Tablet addr: %v", tabletAddr)
 	resp, err := http.Get("http://" + tabletAddr + "/debug/vars")
 	if err != nil {
 		return "", err
