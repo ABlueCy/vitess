@@ -3237,6 +3237,10 @@ func commandValidateSchemaKeyspace(ctx context.Context, wr *wrangler.Wrangler, s
 		wr.Logger().Printf("%s\n", result)
 	}
 
+	if len(resp.Results) > 0 {
+		return fmt.Errorf("%s", resp.Results[0])
+	}
+
 	return nil
 }
 
