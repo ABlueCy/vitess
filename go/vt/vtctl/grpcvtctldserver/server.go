@@ -2941,11 +2941,8 @@ func (s *VtctldServer) ValidateSchemaKeyspace(ctx context.Context, req *vtctldat
 
 			if referenceSchema == nil {
 				referenceAlias = si.PrimaryAlias
-				referenceSchema, err = schematools.GetSchema(ctx, s.ts, s.tmc, referenceAlias, nil, []string{} /*excludeTables*/, false /*includeViews*/)
+				referenceSchema, err = schematools.GetSchema(ctx, s.ts, s.tmc, referenceAlias, nil, req.ExcludeTables /*excludeTables*/, req.IncludeViews /*includeViews*/)
 				if err != nil {
-					errMessage := fmt.Sprintf("GetSchema(%v, nil, %v, %v) failed: %v", referenceAlias, []string{} /*excludeTables*/, false /*includeViews*/, err)
-					resp.ResultsByShard[shard].Results = append(resp.ResultsByShard[shard].Results, errMessage)
-					resp.Results = append(resp.Results, errMessage)
 					return
 				}
 			}
