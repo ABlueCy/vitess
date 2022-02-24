@@ -2900,6 +2900,7 @@ func (s *VtctldServer) ValidateSchemaKeyspace(ctx context.Context, req *vtctldat
 			for shard, shardResults := range resp.ResultsByShard {
 				resp.ResultsByShard[shard].Results = append(resp.ResultsByShard[shard].Results, shardResults.Results...)
 			}
+			return &resp, nil
 		}
 	}
 
